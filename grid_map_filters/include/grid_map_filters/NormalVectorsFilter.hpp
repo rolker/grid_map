@@ -172,7 +172,7 @@ class NormalVectorsFilter : public filters::FilterBase<GridMap> {
   bool parallelizationEnabled_;
 
   //! Parameter that specifies the number of thread used.
-  int threadCount_;
+  //int threadCount_;
 
   //! Normal vector positive axis.
   Eigen::Vector3d normalVectorPositiveAxis_;

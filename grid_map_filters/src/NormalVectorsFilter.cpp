@@ -12,7 +12,7 @@
 #include <memory>
 #include <stdexcept>
 
-#include <tbb/task_scheduler_init.h>
+//#include <tbb/task_scheduler_init.h>
 #include <tbb/tbb.h>
 #include <Eigen/Dense>
 
@@ -21,7 +21,7 @@
 namespace grid_map {
 
 NormalVectorsFilter::NormalVectorsFilter()
-    : method_(Method::RasterSerial), estimationRadius_(0.0), parallelizationEnabled_(false), threadCount_(1), gridMapResolution_(0.02) {}
+    : method_(Method::RasterSerial), estimationRadius_(0.0), parallelizationEnabled_(false), gridMapResolution_(0.02) {}
 
 NormalVectorsFilter::~NormalVectorsFilter() = default;
 
@@ -60,11 +60,11 @@ bool NormalVectorsFilter::configure() {
 
   // Read thread_number to set the number of threads to be used if parallelization is enebled,
   // if parameter is not found an error is thrown and the default is to set it to automatic.
-  if (!FilterBase::getParam(std::string("thread_number"), threadCount_)) {
-    ROS_WARN("Could not find the parameter: `thread_number`. Setting to default value: 'automatic'.");
-    threadCount_ = tbb::task_scheduler_init::automatic;
-  }
-  ROS_DEBUG("Thread_number = %d", threadCount_);
+  // if (!FilterBase::getParam(std::string("thread_number"), threadCount_)) {
+  //   ROS_WARN("Could not find the parameter: `thread_number`. Setting to default value: 'automatic'.");
+  //   //threadCount_ = tbb::task_scheduler_init::automatic;
+  // }
+  // ROS_DEBUG("Thread_number = %d", threadCount_);
 
   // Set wanted method looking at algorithm and parallelization_enabled parameters.
   // parallelization_enabled is used to select whether to use parallelization or not.
@@ -174,10 +174,10 @@ void NormalVectorsFilter::computeWithAreaParallel(GridMap& map, const std::strin
   grid_map::Size gridMapSize = map.getSize();
 
   // Set number of thread to use for parallel programming.
-  std::unique_ptr<tbb::task_scheduler_init> TBBInitPtr;
-  if (threadCount_ != -1) {
-    TBBInitPtr.reset(new tbb::task_scheduler_init(threadCount_));
-  }
+  // std::unique_ptr<tbb::task_scheduler_init> TBBInitPtr;
+  // if (threadCount_ != -1) {
+  //   TBBInitPtr.reset(new tbb::task_scheduler_init(threadCount_));
+  // }
 
   // Parallelized iteration through the map.
   tbb::parallel_for(0, gridMapSize(0) * gridMapSize(1), [&](int range) {
@@ -284,10 +284,10 @@ void NormalVectorsFilter::computeWithRasterParallel(GridMap& map, const std::str
   const Index submapBufferSize(gridMapSize(0) - 2, gridMapSize(1) - 2);
   if (submapBufferSize(1) != 0) {
     // Set number of thread to use for parallel programming
-    std::unique_ptr<tbb::task_scheduler_init> TBBInitPtr;
-    if (threadCount_ != -1) {
-      TBBInitPtr.reset(new tbb::task_scheduler_init(threadCount_));
-    }
+    // std::unique_ptr<tbb::task_scheduler_init> TBBInitPtr;
+    // if (threadCount_ != -1) {
+    //   TBBInitPtr.reset(new tbb::task_scheduler_init(threadCount_));
+    // }
     // Parallelized iteration through the map.
     tbb::parallel_for(0, submapBufferSize(0) * submapBufferSize(1), [&](int range) {
       const Index index(range / submapBufferSize(1) + submapStartIndex(0), range % submapBufferSize(1) + submapStartIndex(1));
